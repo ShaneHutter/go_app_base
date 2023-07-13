@@ -8,7 +8,7 @@ Ternary example
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"strings"
 	//"os"
 	"log"
@@ -27,7 +27,8 @@ var templateDir string = "templates/"
 var fileMatchRegex string = "[^_]+.*\\..*$"
 
 func handler (w http.ResponseWriter , r *http.Request ){
-	templateFilename := staticDir + strings.ReplaceAll( r.URL.Path[ 1: ] , "/" , "_" )
+	templateFilename := templateDir + strings.ReplaceAll( r.URL.Path[ 1: ] , "/" , "_" )
+	staticFilename := staticDir + r.URL.Path[ 1: ]
 	isFile , err := regexp.MatchString( fileMatchRegex , templateFilename )
 	if err != nil {
 		panic( err )
@@ -40,6 +41,8 @@ func handler (w http.ResponseWriter , r *http.Request ){
 		t.Execute( w , &PageData{ 
 			Title: templateFilename, 
 			})
+		} else {
+			fmt.Fprintf( w , staticFilename )
 		}
 	}
 
