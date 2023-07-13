@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"html/template"
 	"regexp"
+	//"reflect"
 )
 
 type PageData struct {
@@ -51,7 +52,8 @@ func handler (w http.ResponseWriter , r *http.Request ){
 			} else { t.Execute( w , pageData ) }
 	} else {
 		// Serve static files here
-		fmt.Fprintf( w , staticFilename )
+		fmt.Printf( "File: %s\n" , staticFilename )
+		http.ServeFile( w , r , staticFilename )
 	}
 }
 
@@ -59,5 +61,8 @@ func handler (w http.ResponseWriter , r *http.Request ){
 // Main
 func main() {
 	http.HandleFunc( "/" , handler )
-	log.Fatal( http.ListenAndServe( ":8080" , nil )	 )
+	err := http.ListenAndServe( ":8080" , nil )
+	if err != nil {
+		log.Fatal( err.Error() )
+	}
 }
