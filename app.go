@@ -1,38 +1,47 @@
+/*
+
+
+Ternary example
+	{ Foobar: ( map[bool]string{ true: "True" , false: "False" } )[ foobar ] }
+*/
+
 package main
 
 import (
-	//"github.com/kluctl/go-jinja2"
-	"fmt"
+	//"fmt"
 	"strings"
-	"os"
+	//"os"
 	"log"
 	"net/http"
+	"html/template"
+	"regexp"
 )
 
-type PageTemplate struct {
-	Filename string
-	Body []byte
+type PageData struct {
+	Title string
+	Foobar string
 }
 
 var staticDir string = "static/"
-
-// Loads a file, use this as a start to load a Jinja template
-func loadPageTemplate( filename string ) ( *PageTemplate , error ){
-	body , err := os.ReadFile( filename )
-	if err != nil {
-		return nil , err 
-	}
-	return &PageTemplate{ Filename: filename , Body: body } , nil
-}
+var templateDir string = "templates/"
+var fileMatchRegex string = "[^_]+.*\\..*$"
 
 func handler (w http.ResponseWriter , r *http.Request ){
 	templateFilename := staticDir + strings.ReplaceAll( r.URL.Path[ 1: ] , "/" , "_" )
-	template , err := loadPageTemplate( templateFilename )
+	isFile , err := regexp.MatchString( fileMatchRegex , templateFilename )
 	if err != nil {
 		panic( err )
 	}
-	fmt.Fprintf( w , string( template.Body ) )
-}
+	if ! isFile {
+		t , err := template.ParseFiles( templateFilename )
+		if err != nil {
+			panic( err )
+		}
+		t.Execute( w , &PageData{ 
+			Title: templateFilename, 
+			})
+		}
+	}
 
 
 // Main
