@@ -19,6 +19,7 @@ import (
 
 type PageData struct {
 	Title string
+	Path string
 	Foobar string
 }
 
@@ -26,25 +27,33 @@ var staticDir string = "static/"
 var templateDir string = "templates/"
 var fileMatchRegex string = "[^_]+.*\\..*$"
 
+
 func handler (w http.ResponseWriter , r *http.Request ){
-	templateFilename := templateDir + strings.ReplaceAll( r.URL.Path[ 1: ] , "/" , "_" )
-	staticFilename := staticDir + r.URL.Path[ 1: ]
+	pageData := &PageData{ Path: r.URL.Path[ 1: ] , Foobar: "Foo Bar Baz" }
+	templateFilename := templateDir + strings.ReplaceAll( pageData.Path , "/" , "_" )
+	staticFilename := staticDir + pageData.Path
 	isFile , err := regexp.MatchString( fileMatchRegex , templateFilename )
 	if err != nil {
 		panic( err )
 	}
-	if ! isFile {
+	if templateFilename == templateDir {
+		// Index
+		t , err := template.ParseFiles( templateFilename + "index" )
+		if err != nil {
+			// Error 404: No Index
+			http.Error( w , err.Error() , http.StatusNotFound )
+		} else { t.Execute( w , pageData ) }
+	} else if ! isFile {
 		t , err := template.ParseFiles( templateFilename )
 		if err != nil {
-			panic( err )
-		}
-		t.Execute( w , &PageData{ 
-			Title: templateFilename, 
-			})
-		} else {
-			fmt.Fprintf( w , staticFilename )
-		}
+			// Error 404
+			http.Error( w , err.Error() , http.StatusNotFound )
+			} else { t.Execute( w , pageData ) }
+	} else {
+		// Serve static files here
+		fmt.Fprintf( w , staticFilename )
 	}
+}
 
 
 // Main
