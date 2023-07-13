@@ -3,7 +3,9 @@
 
 Features to replicate:
 * Session Management
-* Render Jinja into html/css/js
+* ~~render Jinja into html/css/js~~
+    * This is causing issues, look for other rendering methods?
+    * Try html/template first.  This seems to be standard for Golang apps.
 * G-Zip/Brotli compression
 * Server side Websocket setup
 * Load YAML files for app config

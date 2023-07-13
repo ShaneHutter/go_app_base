@@ -1,6 +1,7 @@
 package main
 
 import (
+	//"github.com/kluctl/go-jinja2"
 	"fmt"
 	"strings"
 	"os"
@@ -8,25 +9,29 @@ import (
 	"net/http"
 )
 
-type Page struct {
-	Title string
+type PageTemplate struct {
+	Filename string
 	Body []byte
 }
 
+var staticDir string = "static/"
+
 // Loads a file, use this as a start to load a Jinja template
-func loadJinja( title string ) ( *Page , error ){
-	filename := title + ".jinja"
+func loadPageTemplate( filename string ) ( *PageTemplate , error ){
 	body , err := os.ReadFile( filename )
 	if err != nil {
 		return nil , err 
 	}
-	return &Page{ Title: title , Body: body } , nil
+	return &PageTemplate{ Filename: filename , Body: body } , nil
 }
 
 func handler (w http.ResponseWriter , r *http.Request ){
-	title := strings.ReplaceAll( r.URL.Path[ 1: ] , "/" , "_" )
-	jinja , _ := loadJinja( title )
-	fmt.Fprintf( w , string( jinja.Body ) )
+	templateFilename := staticDir + strings.ReplaceAll( r.URL.Path[ 1: ] , "/" , "_" )
+	template , err := loadPageTemplate( templateFilename )
+	if err != nil {
+		panic( err )
+	}
+	fmt.Fprintf( w , string( template.Body ) )
 }
 
 
