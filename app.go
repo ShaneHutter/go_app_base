@@ -2,18 +2,15 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"os"
+	"log"
+	"net/http"
 )
 
 type Page struct {
 	Title string
 	Body []byte
-}
-
-// Saves a page
-func ( p *Page) save() error {
-	filename := p.Title + ".jinja"
-	return os.WriteFile( filename , p.Body , 0600 )
 }
 
 // Loads a file, use this as a start to load a Jinja template
@@ -26,11 +23,15 @@ func loadJinja( title string ) ( *Page , error ){
 	return &Page{ Title: title , Body: body } , nil
 }
 
+func handler (w http.ResponseWriter , r *http.Request ){
+	title := strings.ReplaceAll( r.URL.Path[ 1: ] , "/" , "_" )
+	jinja , _ := loadJinja( title )
+	fmt.Fprintf( w , string( jinja.Body ) )
+}
+
 
 // Main
 func main() {
-	p1 := &Page{ Title: "foobar" , Body: []byte( "Foo Bar Baz" ) }
-	p1.save()
-	p2 , _ := loadJinja( "foobar" )
-	fmt.Println( string( p2.Body ) )
+	http.HandleFunc( "/" , handler )
+	log.Fatal( http.ListenAndServe( ":8080" , nil )	 )
 }
