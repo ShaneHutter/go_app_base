@@ -8,16 +8,16 @@ Ternary example
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"strings"
-	"os"
+	//"os"
 	"log"
 	"net/http"
 	"html/template"
 	"regexp"
 	//"reflect"
 	//"io"
-	//"bytes"
+	"bytes"
 	brotli "github.com/google/brotli/go/cbrotli"
 )
 
@@ -55,44 +55,51 @@ func handler (w http.ResponseWriter , r *http.Request ){
 
 	if templateFilename == templateDir {
 		// Index
-		//t , err := template.ParseFiles( templateFilename + "index" )
+		tmpl , err := template.ParseFiles( templateFilename + "index" )
 		if err != nil {
 			// Error 404: No Index
 			http.Error( w , err.Error() , http.StatusNotFound )
 		} else { 
-			//var templateOutput io.Writer
-			//var compressedOutput io.Writer
-			//t.Execute( w , pageData ) 
-
-			//bw := brotli.NewWriter( w , brotli.WriterOptions{ Quality: 9 , LGWin: 0 } )
-			//defer bw.Close()
-			bt , err := brotli.Encode( []byte( "foobarfoobarfoobar" ) , brotlyOpts )
+			var templateBuffer bytes.Buffer
+			tmpl.Execute( &templateBuffer , pageData ) 
+			bt , err := brotli.Encode( templateBuffer.Bytes() , brotlyOpts )
 			if err != nil {
 				panic( err )
-			} else {
-				os.WriteFile( "foobar.brotli_test_file" , bt , 0644 )
-				/*
-					NOTE:  Browsers may only accept brotli if https is used.
-				*/
-				w.Write( bt )
-			}
-			//bw.Close()
-
+			} else { w.Write( bt ) }
 		}
 
 	} else if ! isFile {
-		t , err := template.ParseFiles( templateFilename )
+		tmpl , err := template.ParseFiles( templateFilename )
 		if err != nil {
 			// Error 404
 			http.Error( w , err.Error() , http.StatusNotFound )
-			} else { 
-				t.Execute( w , pageData )
-			}
-
+		} else { 
+			var templateBuffer bytes.Buffer
+			tmpl.Execute( &templateBuffer , pageData ) 
+			bt , err := brotli.Encode( templateBuffer.Bytes() , brotlyOpts )
+			if err != nil {
+				panic( err )
+			} else { w.Write( bt ) }
+		}
 	} else {
 		// Serve static files here
+
+		// Old, no compression file serving
+		/*
 		fmt.Printf( "File: %s\n" , staticFilename )
 		http.ServeFile( w , r , staticFilename )
+		*/
+
+		/*
+			 For Brotli compression, you will need to load, compress, and 
+			 write the file to http.ResponseWriter
+
+			 It may make more sense to brotli compress all static files,
+			 and serve them as such.
+		*/
+		http.ServeFile( w , r , staticFilename + ".br" )
+
+
 	}
 	//bw.Close()
 }
