@@ -39,7 +39,8 @@ func handler (w http.ResponseWriter , r *http.Request ){
 	// Set compression on writer
 	brotlyOpts.Quality = 9
 	brotlyOpts.LGWin = 0 
-	w.Header().Set( "Content-Encoding" , "brotli" )
+	w.Header().Set( "Content-Encoding" , "br" )
+	w.Header().Set( "Accept-Encoding" , "br")
 	//bw := brotli.NewWriter( w , brotli.WriterOptions{ Quality: 9 , LGWin: 0 } )
 	//defer bw.Close()
 
@@ -69,7 +70,7 @@ func handler (w http.ResponseWriter , r *http.Request ){
 			if err != nil {
 				panic( err )
 			} else {
-				os.WriteFile( "foobar.brotli" , bt , 0644 )
+				os.WriteFile( "foobar.brotli_test_file" , bt , 0644 )
 				/*
 					NOTE:  Browsers may only accept brotli if https is used.
 				*/
