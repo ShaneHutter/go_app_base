@@ -27,12 +27,27 @@ type PageData struct {
 	Foobar string
 }
 
+type MetaData struct {
+	Charset string
+	Description string
+	Keywords []string
+	Author string
+	Viewport []string
+}
+
 
 var staticDir string = "static/"
 var templateDir string = "templates/"
 var fileMatchRegex string = "[^_]+.*\\..*$"
 var listenAddress string = ":8080"
 var brotlyOpts brotli.WriterOptions
+var metaData MetaData = MetaData{
+	Charset: "UTF-8",
+	Description: "Foobar website",
+	Keywords: []string{ "Test" , "Foobar" },
+	Author: "Shane Hutter <shane@intentropy.au>",
+	Viewport: []string{ "width=device-width" , "initial-scale=1.0" },
+}
 
 
 func handler (w http.ResponseWriter , r *http.Request ){
@@ -91,11 +106,10 @@ func handler (w http.ResponseWriter , r *http.Request ){
 		*/
 
 		/*
-			 For Brotli compression, you will need to load, compress, and 
-			 write the file to http.ResponseWriter
-
-			 It may make more sense to brotli compress all static files,
-			 and serve them as such.
+			 It may make more sense to brotli compress all static files, saving compute to 
+			 compress uncompressed files before serving.  Build the container with all
+			 static resources brotli compresses.  This will save disk use on server as well.
+			 and serve them as such.  Unity game webgl files will already have the extension
 		*/
 		http.ServeFile( w , r , staticFilename + ".br" )
 
