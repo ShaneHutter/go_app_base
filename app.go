@@ -98,13 +98,11 @@ func handler (w http.ResponseWriter , r *http.Request ){
 		}
 	} else {
 		// Serve static files here
-
 		// Old, no compression file serving
 		/*
 		fmt.Printf( "File: %s\n" , staticFilename )
 		http.ServeFile( w , r , staticFilename )
 		*/
-
 		/*
 			 It may make more sense to brotli compress all static files, saving compute to 
 			 compress uncompressed files before serving.  Build the container with all
@@ -115,7 +113,6 @@ func handler (w http.ResponseWriter , r *http.Request ){
 
 
 	}
-	//bw.Close()
 }
 
 
