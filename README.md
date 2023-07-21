@@ -1,5 +1,5 @@
 # Go App Base
-## This is an experimental base template for building a Go web app that includes features I commonly use in Python/Flask applications
+## This is an experimental base template for building a Go web app
 
 Features to replicate:
 * Session Management
