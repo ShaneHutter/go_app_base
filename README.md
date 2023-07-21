@@ -1,7 +1,9 @@
 # Go App Base
 ## This is an experimental base template for building a Go web app
 
-Features I'm looking to achieve:
+Goals:
+* Improve packaging of App to keep code tidy
+    * https://stackoverflow.com/questions/15049903/how-to-use-custom-packages
 * Session Management
     * https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/06.2.html
 * Brotli compression
