@@ -6,7 +6,8 @@ Features to replicate:
 * ~~render Jinja into html/css/js~~
     * This is causing issues, look for other rendering methods?
     * Try html/template first.  This seems to be standard for Golang apps.
-* G-Zip/Brotli compression
+* --GZip-- / Brotli compression
+    * br encoding working, currently 100% content is br
 * Server side Websocket setup
 * Load YAML files for app config
 * Connect to DB cluster (psql)
