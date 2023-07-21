@@ -1,7 +1,7 @@
 # Go App Base
 ## This is an experimental base template for building a Go web app
 
-Features to replicate:
+Features I'm looking to achieve:
 * Session Management
 * * Brotli compression
     * br encoding working, currently 100% content is br
