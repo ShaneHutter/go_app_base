@@ -3,7 +3,7 @@
 
 Features I'm looking to achieve:
 * Session Management
-* * Brotli compression
+* Brotli compression
     * br encoding working, currently 100% content is br
 * Server side Websocket setup
 * Load YAML files for app config
